@@ -1,0 +1,750 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SoundWave - Grupo Musical</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+
+        :root {
+            --primary: #FFD700;
+            --secondary: #FFA500;
+            --accent: #FFE55C;
+            --dark: #000000;
+            --light: #FFFFFF;
+            --gradient: linear-gradient(135deg, var(--primary), var(--secondary));
+        }
+
+        body {
+            font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+            background: var(--dark);
+            color: var(--light);
+            overflow-x: hidden;
+            position: relative;
+        }
+
+        /* Animated Background */
+        .bg-animation {
+            position: fixed;
+            width: 100%;
+            height: 100%;
+            top: 0;
+            left: 0;
+            z-index: -1;
+            background: linear-gradient(125deg, #000000 0%, #1a1a1a 50%, #000000 100%);
+        }
+
+        .bg-animation::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 215, 0, 0.1) 0%, transparent 70%);
+            animation: pulse 15s ease-in-out infinite;
+        }
+
+        @keyframes pulse {
+            0%, 100% { transform: scale(1) rotate(0deg); }
+            50% { transform: scale(1.2) rotate(180deg); }
+        }
+
+        /* Floating particles */
+        .particle {
+            position: fixed;
+            pointer-events: none;
+            opacity: 0.3;
+            animation: float 20s infinite;
+        }
+
+        @keyframes float {
+            0%, 100% { transform: translateY(100vh) translateX(0) rotate(0deg); }
+            50% { transform: translateY(-100vh) translateX(100px) rotate(360deg); }
+        }
+
+        /* Header */
+        header {
+            position: relative;
+            min-height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
+            align-items: center;
+            padding: 2rem;
+            text-align: center;
+        }
+
+        .logo-container {
+            position: relative;
+            margin-bottom: 2rem;
+            animation: fadeInDown 1s ease-out;
+        }
+
+        @keyframes fadeInDown {
+            from {
+                opacity: 0;
+                transform: translateY(-50px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        h1 {
+            font-size: clamp(3rem, 10vw, 6rem);
+            font-weight: 900;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -0.02em;
+            position: relative;
+            animation: glow 2s ease-in-out infinite alternate;
+        }
+
+        @keyframes glow {
+            from { filter: drop-shadow(0 0 20px rgba(255, 215, 0, 0.5)); }
+            to { filter: drop-shadow(0 0 30px rgba(255, 165, 0, 0.5)); }
+        }
+
+        .tagline {
+            font-size: 1.5rem;
+            opacity: 0.8;
+            margin-bottom: 3rem;
+            animation: fadeIn 1s ease-out 0.5s both;
+        }
+
+        @keyframes fadeIn {
+            from { opacity: 0; }
+            to { opacity: 0.8; }
+        }
+
+        /* Social Icons */
+        .social-links {
+            display: flex;
+            gap: 1.5rem;
+            justify-content: center;
+            margin-bottom: 2rem;
+            animation: fadeInUp 1s ease-out 0.7s both;
+        }
+
+        @keyframes fadeInUp {
+            from {
+                opacity: 0;
+                transform: translateY(30px);
+            }
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .social-links a {
+            width: 50px;
+            height: 50px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.1);
+            backdrop-filter: blur(10px);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            text-decoration: none;
+            color: var(--light);
+            font-size: 1.3rem;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.2);
+        }
+
+        .social-links a:hover {
+            transform: translateY(-5px) scale(1.1);
+            background: var(--gradient);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.3);
+        }
+
+        /* Scroll indicator */
+        .scroll-indicator {
+            position: absolute;
+            bottom: 2rem;
+            left: 50%;
+            transform: translateX(-50%);
+            animation: bounce 2s infinite;
+            filter: drop-shadow(0 0 10px rgba(255, 215, 0, 0.3));
+        }
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% { transform: translateX(-50%) translateY(0); }
+            40% { transform: translateX(-50%) translateY(-20px); }
+            60% { transform: translateX(-50%) translateY(-10px); }
+        }
+
+        /* Sections */
+        section {
+            padding: 5rem 1rem;
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+        }
+
+        .section-title {
+            font-size: clamp(2rem, 5vw, 3rem);
+            text-align: center;
+            margin-bottom: 3rem;
+            position: relative;
+            animation: slideIn 0.8s ease-out forwards;
+            opacity: 0;
+        }
+
+        @keyframes slideIn {
+            to {
+                opacity: 1;
+                transform: translateX(0);
+            }
+        }
+
+        /* Video Gallery */
+        .video-gallery {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .video-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            overflow: hidden;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transform: translateY(50px);
+            opacity: 0;
+            animation: fadeInCard 0.8s ease-out forwards;
+        }
+
+        @keyframes fadeInCard {
+            to {
+                opacity: 1;
+                transform: translateY(0);
+            }
+        }
+
+        .video-card:hover {
+            transform: translateY(-10px) scale(1.02);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .video-placeholder {
+            width: 100%;
+            height: 200px;
+            background: linear-gradient(45deg, rgba(255, 215, 0, 0.2), rgba(255, 165, 0, 0.2));
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .play-button {
+            width: 60px;
+            height: 60px;
+            background: rgba(255, 255, 255, 0.9);
+            border-radius: 50%;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            z-index: 1;
+        }
+
+        .play-button::after {
+            content: '▶';
+            color: var(--dark);
+            font-size: 1.5rem;
+            margin-left: 5px;
+        }
+
+        .video-card:hover .play-button {
+            transform: scale(1.1);
+            background: var(--light);
+        }
+
+        /* Artists */
+        .artists-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 4rem;
+        }
+
+        .artist-card {
+            text-align: center;
+            padding: 2rem;
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            transition: all 0.3s ease;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            cursor: pointer;
+        }
+
+        .artist-card:hover {
+            transform: translateY(-10px);
+            background: rgba(255, 255, 255, 0.1);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.3);
+        }
+
+        .artist-avatar {
+            width: 120px;
+            height: 120px;
+            background: var(--gradient);
+            border-radius: 50%;
+            margin: 0 auto 1rem;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 3rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .artist-avatar::before {
+            content: '';
+            position: absolute;
+            top: -50%;
+            left: -50%;
+            width: 200%;
+            height: 200%;
+            background: radial-gradient(circle, rgba(255, 255, 255, 0.2) 0%, transparent 70%);
+            animation: rotate 10s linear infinite;
+        }
+
+        @keyframes rotate {
+            100% { transform: rotate(360deg); }
+        }
+
+        /* Contact Forms */
+        .contact-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+
+        .contact-card {
+            background: rgba(255, 255, 255, 0.05);
+            backdrop-filter: blur(10px);
+            border-radius: 20px;
+            padding: 2rem;
+            border: 1px solid rgba(255, 255, 255, 0.1);
+            transition: all 0.3s ease;
+        }
+
+        .contact-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 20px 40px rgba(255, 215, 0, 0.2);
+        }
+
+        .contact-card h3 {
+            font-size: 1.5rem;
+            margin-bottom: 1.5rem;
+            background: var(--gradient);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+
+        .form-group {
+            margin-bottom: 1.5rem;
+        }
+
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            opacity: 0.8;
+            font-size: 0.9rem;
+        }
+
+        input, textarea, select {
+            width: 100%;
+            padding: 0.8rem;
+            background: rgba(255, 255, 255, 0.1);
+            border: 1px solid rgba(255, 255, 255, 0.2);
+            border-radius: 10px;
+            color: var(--light);
+            font-size: 1rem;
+            transition: all 0.3s ease;
+        }
+
+        input:focus, textarea:focus, select:focus {
+            outline: none;
+            border-color: var(--primary);
+            background: rgba(255, 255, 255, 0.15);
+            box-shadow: 0 0 20px rgba(255, 215, 0, 0.3);
+        }
+
+        .btn {
+            width: 100%;
+            padding: 1rem 2rem;
+            background: var(--gradient);
+            border: none;
+            border-radius: 50px;
+            color: white;
+            font-size: 1.1rem;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .btn::before {
+            content: '';
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            width: 0;
+            height: 0;
+            background: rgba(255, 255, 255, 0.3);
+            border-radius: 50%;
+            transform: translate(-50%, -50%);
+            transition: width 0.6s, height 0.6s;
+        }
+
+        .btn:hover::before {
+            width: 300px;
+            height: 300px;
+        }
+
+        .btn:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 10px 30px rgba(255, 215, 0, 0.4);
+        }
+
+        /* Footer */
+        footer {
+            text-align: center;
+            padding: 3rem 1rem;
+            background: rgba(0, 0, 0, 0.5);
+            backdrop-filter: blur(10px);
+        }
+
+        /* Mobile responsive */
+        @media (max-width: 768px) {
+            .social-links {
+                flex-wrap: wrap;
+            }
+            
+            section {
+                padding: 3rem 1rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <div class="bg-animation"></div>
+    
+    <!-- Floating particles -->
+    <div class="particle" style="width: 20px; height: 20px; background: var(--primary); border-radius: 50%; top: 10%; left: 10%; box-shadow: 0 0 20px rgba(255, 215, 0, 0.5);"></div>
+    <div class="particle" style="width: 15px; height: 15px; background: var(--secondary); border-radius: 50%; top: 80%; left: 90%; animation-delay: 5s; box-shadow: 0 0 15px rgba(255, 165, 0, 0.5);"></div>
+    <div class="particle" style="width: 25px; height: 25px; background: var(--accent); border-radius: 50%; top: 50%; left: 5%; animation-delay: 10s; box-shadow: 0 0 25px rgba(255, 229, 92, 0.5);"></div>
+
+    <!-- Header -->
+    <header>
+        <div class="logo-container">
+            <h1>Grupo Escape</h1>
+            <p class="tagline">Regional Fusión</p>
+        </div>
+        
+        <div class="social-links">
+            <a href="#" title="Instagram">📷</a>
+            <a href="#" title="YouTube">▶️</a>
+            <a href="#" title="Spotify">🎵</a>
+            <a href="#" title="Facebook">👥</a>
+            <a href="#" title="TikTok">🎭</a>
+        </div>
+        
+        <div class="scroll-indicator">
+            <svg width="30" height="50" viewBox="0 0 30 50">
+                <rect x="10" y="10" width="10" height="20" rx="5" stroke="white" stroke-width="2" fill="none" opacity="0.3"/>
+                <circle cx="15" cy="20" r="3" fill="white">
+                    <animate attributeName="cy" from="15" to="25" dur="1.5s" repeatCount="indefinite"/>
+                </circle>
+            </svg>
+        </div>
+    </header>
+
+    <!-- Videos Section -->
+    <section id="videos">
+        <h2 class="section-title">Nuestros Videos</h2>
+        <div class="video-gallery">
+            <div class="video-card" style="animation-delay: 0.1s;">
+                <div class="video-placeholder">
+                    <div class="play-button"></div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3>En Vivo - Teatro Principal</h3>
+                    <p style="opacity: 0.7;">Concierto completo en 4K</p>
+                </div>
+            </div>
+            
+            <div class="video-card" style="animation-delay: 0.2s;">
+                <div class="video-placeholder">
+                    <div class="play-button"></div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3>Video Musical - "Ecos"</h3>
+                    <p style="opacity: 0.7;">Nuestro último sencillo</p>
+                </div>
+            </div>
+            
+            <div class="video-card" style="animation-delay: 0.3s;">
+                <div class="video-placeholder">
+                    <div class="play-button"></div>
+                </div>
+                <div style="padding: 1.5rem;">
+                    <h3>Behind the Scenes</h3>
+                    <p style="opacity: 0.7;">Grabación del álbum</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Artists Section -->
+    <section id="artists">
+        <h2 class="section-title" style="animation-delay: 0.2s;">Nuestros Artistas</h2>
+        <div class="artists-grid">
+            <div class="artist-card">
+                <div class="artist-avatar">🎸</div>
+                <h3>Alex Rivera</h3>
+                <p style="opacity: 0.7;">Guitarra y Voz Principal</p>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🎹</div>
+                <h3>María Santos</h3>
+                <p style="opacity: 0.7;">Teclados y Coros</p>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🥁</div>
+                <h3>Carlos Mendoza</h3>
+                <p style="opacity: 0.7;">Batería y Percusión</p>
+            </div>
+            
+            <div class="artist-card">
+                <div class="artist-avatar">🎸</div>
+                <h3>Laura Gómez</h3>
+                <p style="opacity: 0.7;">Bajo y Coros</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Contact Section -->
+    <section id="contact">
+        <h2 class="section-title" style="animation-delay: 0.3s;">Contáctanos</h2>
+        <div class="contact-container">
+            <!-- Hire Band Form -->
+            <div class="contact-card">
+                <h3>Contrata al Grupo</h3>
+                <form>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" placeholder="Tu nombre completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="tu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Tipo de Evento</label>
+                        <select required>
+                            <option value="">Selecciona una opción</option>
+                            <option>Boda</option>
+                            <option>Evento Corporativo</option>
+                            <option>Festival</option>
+                            <option>Concierto Privado</option>
+                            <option>Otro</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Fecha del Evento</label>
+                        <input type="date" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Mensaje</label>
+                        <textarea rows="4" placeholder="Cuéntanos más sobre tu evento..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Enviar Solicitud</button>
+                </form>
+            </div>
+            
+            <!-- Sound Services Form -->
+            <div class="contact-card">
+                <h3>Servicios de Sonido</h3>
+                <form>
+                    <div class="form-group">
+                        <label>Nombre</label>
+                        <input type="text" placeholder="Tu nombre completo" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Email</label>
+                        <input type="email" placeholder="tu@email.com" required>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Servicio Requerido</label>
+                        <select required>
+                            <option value="">Selecciona una opción</option>
+                            <option>Alquiler de Equipo</option>
+                            <option>Sonido para Evento</option>
+                            <option>Grabación en Estudio</option>
+                            <option>Mezcla y Masterización</option>
+                            <option>Consultoría de Audio</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Presupuesto Estimado</label>
+                        <select>
+                            <option value="">Selecciona un rango</option>
+                            <option>$500 - $1,000</option>
+                            <option>$1,000 - $2,500</option>
+                            <option>$2,500 - $5,000</option>
+                            <option>Más de $5,000</option>
+                        </select>
+                    </div>
+                    
+                    <div class="form-group">
+                        <label>Detalles del Proyecto</label>
+                        <textarea rows="4" placeholder="Describe tus necesidades de audio..."></textarea>
+                    </div>
+                    
+                    <button type="submit" class="btn">Solicitar Cotización</button>
+                </form>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer -->
+    <footer>
+        <p>&copy; 2024 SoundWave. Todos los derechos reservados.</p>
+        <p style="opacity: 0.6; margin-top: 1rem;">Música que conecta corazones 🎵</p>
+    </footer>
+
+    <script>
+        // Intersection Observer for animations
+        const observerOptions = {
+            threshold: 0.1,
+            rootMargin: '0px 0px -50px 0px'
+        };
+
+        const observer = new IntersectionObserver((entries) => {
+            entries.forEach(entry => {
+                if (entry.isIntersecting) {
+                    entry.target.style.animationPlayState = 'running';
+                }
+            });
+        }, observerOptions);
+
+        // Observe all animated elements
+        document.querySelectorAll('.section-title, .video-card, .artist-card, .contact-card').forEach(el => {
+            el.style.animationPlayState = 'paused';
+            observer.observe(el);
+        });
+
+        // Smooth scrolling
+        document.querySelector('.scroll-indicator').addEventListener('click', () => {
+            document.getElementById('videos').scrollIntoView({ behavior: 'smooth' });
+        });
+
+        // Form handling
+        document.querySelectorAll('form').forEach(form => {
+            form.addEventListener('submit', (e) => {
+                e.preventDefault();
+                
+                // Create success message
+                const successMsg = document.createElement('div');
+                successMsg.style.cssText = `
+                    position: fixed;
+                    top: 50%;
+                    left: 50%;
+                    transform: translate(-50%, -50%);
+                    background: var(--gradient);
+                    padding: 2rem 3rem;
+                    border-radius: 20px;
+                    z-index: 1000;
+                    animation: fadeIn 0.5s ease-out;
+                    box-shadow: 0 20px 60px rgba(255, 215, 0, 0.4);
+                `;
+                successMsg.innerHTML = '<h3 style="margin-bottom: 0.5rem;">¡Mensaje Enviado!</h3><p>Nos pondremos en contacto contigo pronto.</p>';
+                document.body.appendChild(successMsg);
+                
+                // Remove message after 3 seconds
+                setTimeout(() => {
+                    successMsg.style.animation = 'fadeOut 0.5s ease-out';
+                    setTimeout(() => successMsg.remove(), 500);
+                }, 3000);
+                
+                // Reset form
+                form.reset();
+            });
+        });
+
+        // Add ripple effect to buttons
+        document.querySelectorAll('.btn').forEach(button => {
+            button.addEventListener('click', function(e) {
+                const ripple = document.createElement('span');
+                const rect = this.getBoundingClientRect();
+                const size = Math.max(rect.width, rect.height);
+                const x = e.clientX - rect.left - size / 2;
+                const y = e.clientY - rect.top - size / 2;
+                
+                ripple.style.cssText = `
+                    position: absolute;
+                    width: ${size}px;
+                    height: ${size}px;
+                    border-radius: 50%;
+                    background: rgba(255, 255, 255, 0.5);
+                    pointer-events: none;
+                    transform: translate(${x}px, ${y}px) scale(0);
+                    animation: ripple 0.6s ease-out;
+                `;
+                
+                this.appendChild(ripple);
+                setTimeout(() => ripple.remove(), 600);
+            });
+        });
+
+        // Add keyframe for ripple animation
+        const style = document.createElement('style');
+        style.textContent = `
+            @keyframes ripple {
+                to {
+                    transform: translate(var(--x), var(--y)) scale(4);
+                    opacity: 0;
+                }
+            }
+            @keyframes fadeOut {
+                to {
+                    opacity: 0;
+                    transform: translate(-50%, -50%) scale(0.9);
+                }
+            }
+        `;
+        document.head.appendChild(style);
+    </script>
+</body>
+</html>
